@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>勘误单</h2>
+<form method="get" action="{{ url_for('errata_list') }}">
+  <input type="text" name="material_id" value="{{ f_material }}" placeholder="素材号">
+  <input type="text" name="sentence_id" value="{{ f_sentence }}" placeholder="句号">
+  <input type="text" name="program_id" value="{{ f_program }}" placeholder="成片号">
+  <button type="submit">查询</button>
+</form>
+<table>
+  <tr><th>单号</th><th>素材号</th><th>句号</th><th>基于版本</th><th>涉及条目</th><th>出具时间</th><th></th></tr>
+  {% for e in rows %}
+  <tr>
+    <td>#{{ e.id }}</td>
+    <td>{{ e.material_id }}</td>
+    <td>{{ e.sentence_id }}</td>
+    <td>第 {{ e.base_revision }} 版 → 第 {{ e.base_revision + 1 }} 版</td>
+    <td>{{ e.item_count }} 条</td>
+    <td>{{ e.created_at }}</td>
+    <td><a href="{{ url_for('errata_detail', errata_id=e.id) }}">查看</a></td>
+  </tr>
+  {% else %}
+  <tr><td colspan="7" class="muted">暂无勘误单。</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}字幕勘误{% endblock %}</title>
+<style>
+  body{font-family:system-ui,"PingFang SC","Microsoft YaHei",sans-serif;margin:0;background:#f5f6f8;color:#222}
+  header{background:#2c3e50;color:#fff;padding:12px 24px;display:flex;gap:18px;align-items:baseline;flex-wrap:wrap}
+  header a{color:#cfe3ff;text-decoration:none}
+  header a:hover{text-decoration:underline}
+  header .brand{color:#fff;font-weight:700}
+  main{max-width:1120px;margin:24px auto;padding:0 16px}
+  table{border-collapse:collapse;width:100%;background:#fff;margin:8px 0 20px}
+  th,td{border:1px solid #ddd;padding:6px 10px;text-align:left;font-size:14px;vertical-align:top}
+  th{background:#eef1f4;white-space:nowrap}
+  .flash{padding:10px 14px;border-radius:6px;margin-bottom:12px;font-size:14px}
+  .flash.success{background:#e6f6e6;border:1px solid #8ccf8c}
+  .flash.error{background:#fdeaea;border:1px solid #e79a9a}
+  .badge{display:inline-block;padding:2px 10px;border-radius:10px;color:#fff;font-size:12px;white-space:nowrap}
+  .badge.delete{background:#c0392b}.badge.add{background:#1e8449}.badge.replace{background:#b9770e}
+  .card{background:#fff;border:1px solid #ddd;border-radius:8px;padding:16px 18px;margin-bottom:20px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+  code.tc{font-family:ui-monospace,Consolas,monospace;background:#f0f0f0;padding:1px 5px;border-radius:4px;white-space:nowrap}
+  input[type=text],input[type=number]{padding:6px 8px;border:1px solid #bbb;border-radius:4px;font-size:14px}
+  button{padding:8px 18px;border:0;border-radius:4px;background:#2c3e50;color:#fff;cursor:pointer;font-size:14px}
+  button:hover{background:#3d566e}
+  .muted{color:#777;font-size:13px}
+  .old{color:#c0392b}.new{color:#1e8449}
+  h2{margin-top:0}
+  label{display:block;margin:10px 0 4px;font-size:14px}
+</style>
+</head>
+<body>
+<header>
+  <a class="brand" href="{{ url_for('index') }}">字幕勘误台</a>
+  <a href="{{ url_for('subtitles') }}">素材字幕</a>
+  <a href="{{ url_for('edits') }}">剪辑表</a>
+  <a href="{{ url_for('errata_list') }}">勘误单</a>
+</header>
+<main>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for cat, msg in messages %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+{% endwith %}
+{% block content %}{% endblock %}
+</main>
+</body>
+</html>

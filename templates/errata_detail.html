@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>勘误单 #{{ e.id }}</h2>
+
+<div class="card">
+  <p><b>素材号：</b>{{ e.material_id }}　<b>句号：</b>{{ e.sentence_id }}
+     <b>版本：</b>第 {{ e.base_revision }} 版 → 第 {{ e.base_revision + 1 }} 版
+     <b>出具时间：</b>{{ e.created_at }}</p>
+  <table>
+    <tr><th></th><th>素材时间（左闭右开）</th><th>原文</th></tr>
+    <tr>
+      <td class="old"><b>更正前</b></td>
+      <td><code class="tc">{{ e.old_start_ms|fmt_tc }}</code> – <code class="tc">{{ e.old_end_ms|fmt_tc }}</code>
+          <span class="muted">（{{ e.old_start_ms }} – {{ e.old_end_ms }} ms）</span></td>
+      <td class="old">{{ e.old_text }}</td>
+    </tr>
+    <tr>
+      <td class="new"><b>更正后</b></td>
+      <td><code class="tc">{{ e.new_start_ms|fmt_tc }}</code> – <code class="tc">{{ e.new_end_ms|fmt_tc }}</code>
+          <span class="muted">（{{ e.new_start_ms }} – {{ e.new_end_ms }} ms）</span></td>
+      <td class="new">{{ e.new_text }}</td>
+    </tr>
+  </table>
+  <p class="muted">本单出具后不可更改；该句后续再修订会出具新单，不影响本单。</p>
+</div>
+
+<h2>各剪辑段改动（成片时码，左闭右开）</h2>
+{% if items %}
+<table>
+  <tr><th>成片号</th><th>剪辑段号</th><th>操作</th><th>旧时码（删）</th><th>新时码（加）</th><th>旧原文</th><th>新原文</th></tr>
+  {% for it in items %}
+  <tr>
+    <td>{{ it.program_id }}</td>
+    <td>{{ it.segment_id }}</td>
+    <td><span class="badge {{ it.action }}">{{ it.action|action_label }}</span></td>
+    <td>{% if it.old_start_ms is not none %}
+        <code class="tc">{{ it.old_start_ms|fmt_tc }}</code> – <code class="tc">{{ it.old_end_ms|fmt_tc }}</code>
+        {% else %}—{% endif %}</td>
+    <td>{% if it.new_start_ms is not none %}
+        <code class="tc">{{ it.new_start_ms|fmt_tc }}</code> – <code class="tc">{{ it.new_end_ms|fmt_tc }}</code>
+        {% else %}—{% endif %}</td>
+    <td class="old">{{ it.old_text or '—' }}</td>
+    <td class="new">{{ it.new_text or '—' }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p class="muted">本次更正不涉及任何已成片剪辑段（该句未被剪入，或改动落在各段截取范围之外）。</p>
+{% endif %}
+
+<p><a href="{{ url_for('revise_form', material_id=e.material_id, sentence_id=e.sentence_id) }}">继续修订该句</a> ·
+   <a href="{{ url_for('errata_list') }}">返回勘误单列表</a></p>
+{% endblock %}

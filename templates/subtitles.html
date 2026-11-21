@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>素材字幕</h2>
+<form method="get" action="{{ url_for('subtitles') }}">
+  <input type="text" name="material_id" value="{{ material }}" placeholder="按素材号过滤">
+  <button type="submit">过滤</button>
+  {% if material %}<a href="{{ url_for('subtitles') }}">清除</a>{% endif %}
+</form>
+<p class="muted">时码区间为左闭右开 [开始, 结束)。{% if not material %}最多显示 500 句。{% endif %}</p>
+<table>
+  <tr><th>素材号</th><th>句号</th><th>开始</th><th>结束</th><th>原文</th><th>版本</th><th></th></tr>
+  {% for s in rows %}
+  <tr>
+    <td>{{ s.material_id }}</td>
+    <td>{{ s.sentence_id }}</td>
+    <td><code class="tc">{{ s.start_ms|fmt_tc }}</code><br><span class="muted">{{ s.start_ms }} ms</span></td>
+    <td><code class="tc">{{ s.end_ms|fmt_tc }}</code><br><span class="muted">{{ s.end_ms }} ms</span></td>
+    <td>{{ s.text }}</td>
+    <td>第 {{ s.revision }} 版</td>
+    <td><a href="{{ url_for('revise_form', material_id=s.material_id, sentence_id=s.sentence_id) }}">修订</a></td>
+  </tr>
+  {% else %}
+  <tr><td colspan="7" class="muted">暂无数据，请先在首页上传素材字幕 CSV。</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>修订字幕：{{ s.material_id }} / 句号 {{ s.sentence_id }}</h2>
+
+<div class="card">
+  <h2>当前内容（第 {{ s.revision }} 版）</h2>
+  <p>素材时间：<code class="tc">{{ s.start_ms|fmt_tc }}</code> – <code class="tc">{{ s.end_ms|fmt_tc }}</code>
+     <span class="muted">（{{ s.start_ms }} – {{ s.end_ms }} ms，左闭右开）</span></p>
+  <p>原文：{{ s.text }}</p>
+</div>
+
+<div class="card">
+  <h2>按所见修订</h2>
+  <p class="muted">只改要改的部分，其余保持原值。提交后：原句立即更正，同时出具勘误单（失败或修订过期则两者都不发生）。</p>
+  <form method="post" action="{{ url_for('revise_submit', material_id=s.material_id, sentence_id=s.sentence_id) }}">
+    <input type="hidden" name="base_revision" value="{{ s.revision }}">
+    <label>开始毫秒</label>
+    <input type="number" name="start_ms" value="{{ s.start_ms }}" min="0" step="1" required>
+    <label>结束毫秒</label>
+    <input type="number" name="end_ms" value="{{ s.end_ms }}" min="0" step="1" required>
+    <label>原文</label>
+    <input type="text" name="text" value="{{ s.text }}" size="60" required>
+    <div style="margin-top:14px">
+      <button type="submit">提交修订并出具勘误单</button>
+      <a href="{{ url_for('subtitles') }}" style="margin-left:10px">取消</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>字幕勘误台</h2>
+<p class="muted">同一句采访可能被剪进几版纪录片。源字幕更正后，在此出具勘误单：系统按等速换算，把更正前后与各剪辑段的重叠部分折算成成片时码（区间左闭右开），逐段列出要删除、补加或替换的字幕。</p>
+
+<div class="grid">
+  <div class="card">
+    <h2>① 上传素材字幕 CSV</h2>
+    <p class="muted">列：素材号、句号、开始毫秒、结束毫秒、原文</p>
+    <form method="post" action="{{ url_for('upload_subtitles') }}" enctype="multipart/form-data">
+      <input type="file" name="file" accept=".csv" required>
+      <button type="submit">上传</button>
+    </form>
+    <p class="muted">已收录 {{ counts.subtitles }} 句</p>
+  </div>
+  <div class="card">
+    <h2>② 上传等速剪辑表 CSV</h2>
+    <p class="muted">列：成片号、剪辑段号、素材号、截取开始毫秒、截取结束毫秒、成片起点毫秒</p>
+    <form method="post" action="{{ url_for('upload_edits') }}" enctype="multipart/form-data">
+      <input type="file" name="file" accept=".csv" required>
+      <button type="submit">上传</button>
+    </form>
+    <p class="muted">已收录 {{ counts.edits }} 段</p>
+  </div>
+  <div class="card">
+    <h2>③ 修订与勘误单</h2>
+    <p>到 <a href="{{ url_for('subtitles') }}">素材字幕</a> 选一句点“修订”，按所见改正文字或起止毫秒，提交后即出具勘误单。</p>
+    <p class="muted">已出具 {{ counts.errata }} 单 · <a href="{{ url_for('errata_list') }}">查询全部勘误单</a></p>
+  </div>
+</div>
+
+{% if recent %}
+<h2>最近勘误单</h2>
+<table>
+  <tr><th>单号</th><th>素材号</th><th>句号</th><th>基于版本</th><th>出具时间</th><th></th></tr>
+  {% for e in recent %}
+  <tr>
+    <td>#{{ e.id }}</td>
+    <td>{{ e.material_id }}</td>
+    <td>{{ e.sentence_id }}</td>
+    <td>第 {{ e.base_revision }} 版 → 第 {{ e.base_revision + 1 }} 版</td>
+    <td>{{ e.created_at }}</td>
+    <td><a href="{{ url_for('errata_detail', errata_id=e.id) }}">查看</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+{% endblock %}

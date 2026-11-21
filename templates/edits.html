@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>等速剪辑表</h2>
+<p class="muted">素材区间 [截取开始, 截取结束) 等速映射到成片：[成片起点, 成片起点 + 截取时长)。</p>
+<table>
+  <tr><th>成片号</th><th>剪辑段号</th><th>素材号</th><th>截取开始</th><th>截取结束</th><th>成片起点</th></tr>
+  {% for r in rows %}
+  <tr>
+    <td>{{ r.program_id }}</td>
+    <td>{{ r.segment_id }}</td>
+    <td>{{ r.material_id }}</td>
+    <td><code class="tc">{{ r.cut_start_ms|fmt_tc }}</code></td>
+    <td><code class="tc">{{ r.cut_end_ms|fmt_tc }}</code></td>
+    <td><code class="tc">{{ r.program_start_ms|fmt_tc }}</code></td>
+  </tr>
+  {% else %}
+  <tr><td colspan="6" class="muted">暂无数据，请先在首页上传剪辑表 CSV。</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}
